@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translation App</title>
+    <style>
+        *{
+            margin: 0;
+        }
+        #main{
+            /* border: 1px solid black; */
+            display: flex;
+            margin: 4% 5%;
+            padding:  5% 0;
+            background-color: aliceblue;
+            box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+            background-image: url("https://i.pinimg.com/originals/48/59/c2/4859c224850c210c0f69c77e31280c74.jpg");
+        }
+
+        #source{
+            /* border: 2px solid red; */
+            width: 40%;
+            margin: auto;
+        }
+
+        #destination{
+            /* border: 2px solid red; */
+            margin: auto;
+            width: 40%;
+        }
+      
+
+        select{
+            border: none;
+            font-size: 25px;
+            margin-left: 10px;
+            background-color:transparent ;
+            outline: none;
+            /* box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px; */
+        }
+
+        h2{
+            color:black;
+        }
+
+        textarea{
+            font-size:190%;
+            resize: none;
+            padding: 10px;
+            outline: none;
+            width: 100%;
+        }
+
+        #translated{
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        h1{
+            text-align: center;
+            margin: 20px 0 -40px 0;
+            font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }
+    </style>
+</head>
+<body>
+    <h1>Translate Your Thoughts Here...</h1>
+    <div id="main">
+        <div id="source">
+            <h2>Translate from :<select name="" id="sourceLang">
+                <option value="ar">Arabic</option>
+                <option value="az">Azerbaijani</option>
+                <option value="cs">Czech</option>
+                <option value="da">Danish</option>
+                <option value="de">German</option>
+                <option value="el">Greek</option>
+                <option value="en" selected>English</option>
+                <option value="eo">Esperanto</option>
+                <option value="es">Spanish</option>
+                <option value="fa">Persian</option>
+                <option value="fi">Finnish</option>
+                <option value="fr">French</option>
+                <option value="ga">Irish</option>
+                <option value="he">Hebrew</option>
+                <option value="hi">Hindi</option>
+                <option value="hu">Hungarian</option>
+                <option value="in">Indonesian</option>
+                <option value="it">Italian</option>
+                <option value="ja">Japanese</option>
+                <option value="ko">Korean</option>
+                <option value="nl">Dutch</option>
+                <option value="pol">Polish</option>
+                <option value="pt">Portuguese</option>
+                <option value="ru">Russian</option>
+                <option value="sk">Slovak</option>
+                <option value="sv">Swedish</option>
+                <option value="tr">Turkish</option>
+                <option value="uk">Ukranian</option>
+                <option value="zh">Chinese</option>
+            </select></h2>
+
+
+            <textarea name="" id="input" cols="40" rows="10" placeholder="Type Here"></textarea>
+        </div>
+        <div id="destination">
+            <h2>Translate into :<select name="" id="targetLang">
+                <option value="ar">Arabic</option>
+                <option value="az">Azerbaijani</option>
+                <option value="cs">Czech</option>
+                <option value="da">Danish</option>
+                <option value="de">German</option>
+                <option value="el">Greek</option>
+                <option value="en">English</option>
+                <option value="eo">Esperanto</option>
+                <option value="es" selected>Spanish</option>
+                <option value="fa">Persian</option>
+                <option value="fi">Finnish</option>
+                <option value="fr">French</option>
+                <option value="ga">Irish</option>
+                <option value="he">Hebrew</option>
+                <option value="hi">Hindi</option>
+                <option value="hu">Hungarian</option>
+                <option value="in">Indonesian</option>
+                <option value="it">Italian</option>
+                <option value="ja">Japanese</option>
+                <option value="ko">Korean</option>
+                <option value="nl">Dutch</option>
+                <option value="pol">Polish</option>
+                <option value="pt">Portuguese</option>
+                <option value="ru">Russian</option>
+                <option value="sk">Slovak</option>
+                <option value="sv">Swedish</option>
+                <option value="tr">Turkish</option>
+                <option value="uk">Ukranian</option>
+                <option value="zh">Chinese</option>
+                
+            </select></h2>
+            
+                <textarea name="" id="output" cols="40" rows="10" readonly></textarea>
+            
+        </div>
+    </div>
+    
+</body>
+</html>
+<script>
+
+    
+     let id;
+    let debounce = ()=>{
+        // console.log("start");
+        if(id){
+            clearInterval(id);
+        }
+            id=setTimeout(()=>{
+                console.log("object");
+                translateFunc();
+            },2000)
+    }
+
+   
+    document.getElementById("input").addEventListener("input",debounce);
+    document.getElementById("sourceLang").addEventListener("change",debounce);
+    document.getElementById("targetLang").addEventListener("change",debounce);
+
+    function read(id){
+        return document.getElementById(id).value;
+    }
+    
+    
+    async function translateFunc(){
+        try{
+        let inp= read("input");
+        let sourcelang =read("sourceLang");
+        let targetLang= read("targetLang");
+        const res = await fetch(`https://libretranslate.de/translate`, {
+        method: "POST",
+        body: JSON.stringify({
+		q: inp,
+		source: sourcelang,
+		target: targetLang,
+		format: "text",
+	    }),
+	headers: { "Content-Type": "application/json" }
+});
+
+const data = await res.json();
+console.log(data);
+document.getElementById("output").textContent=data.translatedText;
+
+        }
+        catch(error){
+            console.log("error");
+        }
+      
+    }
+    
+</script>
